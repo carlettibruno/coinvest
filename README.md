@@ -10,9 +10,9 @@ Investing in Brazil currently isn't good, then I was searching other way to inve
 
 ## Technologies
 
-Java (jdk 8)
-Spring
-JPA
+- Java (jdk 8)
+- Spring
+- JPA
 
 ## Improvements
 
