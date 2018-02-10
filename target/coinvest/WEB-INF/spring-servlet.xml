@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/data/jpa 
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/task 
+		http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+	<!-- For consider the using of annotations foe defining Spring Bean -->
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	<tx:annotation-driven />
+	<!-- <context:property-placeholder location="classpath:config.properties" 
+		/> -->
+
+	<!-- For defining Spring Bean -->
+	<context:component-scan base-package="br.com.carlettisolucoes.coinvest.*" />
+
+	<!-- For bootstrapping the Spring Repository -->
+	<jpa:repositories base-package="br.com.carlettisolucoes.coinvest.*" />
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="br.com.carlettisolucoes.coinvest.*" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<!-- <prop key="hibernate.hbm2ddl.auto">create-drop</prop> -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<!-- <prop key="show_sql">true</prop> -->
+				<!-- <prop key="format_sql">true</prop> -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+<!-- 		<property name="url" value="jdbc:postgresql://localhost:5432/coinvest" /> -->
+<!-- 		<property name="username" value="postgres" /> -->
+<!-- 		<property name="password" value="123123" /> -->
+		<property name="url" value="jdbc:postgresql://104.198.172.12:5432/coinvest" />
+		<property name="username" value="postgres" />
+		<property name="password" value="emIB7LmLgIM0ouct" />
+	</bean>
+
+	<task:scheduler id="scheduler" pool-size="2" />
+	<task:scheduled-tasks scheduler="scheduler">
+<!-- 		<task:scheduled ref="runCoinvest" method="process" -->
+<!-- 			fixed-delay="3000" initial-delay="3000" /> -->
+<!-- 		<task:scheduled ref="runDistanceOrderBook" method="process" -->
+<!-- 			fixed-delay="8000" initial-delay="8000" /> -->
+		<task:scheduled ref="runSaveOrder" method="process"
+			fixed-delay="60000" initial-delay="60000" />
+		<task:scheduled ref="runStatistics" method="process"
+			fixed-delay="1000" initial-delay="1000" />
+		<task:scheduled ref="runFakeOrder" method="process"
+			fixed-delay="30000" initial-delay="30000" />									
+	</task:scheduled-tasks>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="persistenceExceptionTranslationPostProcessor"
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+</beans>
