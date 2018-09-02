@@ -8,6 +8,16 @@ ___
 
 Investing in Brazil currently isn't good, then I was searching other way to invest my money, that my profitability was is greater. Then I wanna profit about 20% per month.
 
+---
+
+## Technologies
+
+- Java (jdk 8)
+- Spring
+- JPA
+
+---
+
 ## Improvements
 
 Now I trade looking some itens, which are: Candlestick Chart and Depth Chart.
